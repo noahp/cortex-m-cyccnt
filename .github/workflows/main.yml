@@ -21,5 +21,4 @@ jobs:
       # run clang-10 with every warning
       - name: Test clang compile
         run:
-          docker run -v $(pwd):/mnt/workspace -t silkeh/clang:10
-            bash -c "clang -Weverything -Werror -c /mnt/workspace/cortexm-cycnt.h -o /dev/null"
+          ./test.sh
