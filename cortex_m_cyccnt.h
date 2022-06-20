@@ -25,20 +25,29 @@ static void cortexm_cyccnt_enable(void) {
 }
 
 //! Simple function to get the current cycle count value
-static uint32_t cortexm_cyccnt_count(void) { return ARM_CM_DWT_CYCCNT; }
+static volatile uint32_t cortexm_cyccnt_count(void) { return ARM_CM_DWT_CYCCNT; }
 
 //! Define a wrapper that can enclose any block (eg function body), and export a
 //! variable containing the last cycle count delta for the block.
 #if CORTEX_M_CYCCNT_ENABLED
-#define CORTEX_M_CYCCNT_WRAP(block_, name_)                                    \
-  extern uint32_t cortex_m_cyccnt_##name_;                                     \
-  static uint32_t cortex_m_cyccnt_##name_ = 0;                                 \
+#define CORTEX_M_CYCCNT_WRAP(name_, block_)                                    \
+  do {                                                                         \
+    extern volatile uint32_t cortex_m_cyccnt_##name_;                                   \
                                                                                \
-  cortex_m_cyccnt_##name_ = cortexm_cyccnt_count();                            \
+    cortex_m_cyccnt_##name_ = cortexm_cyccnt_count();                          \
                                                                                \
-  {block_}                                                                     \
+    {block_}                                                                   \
                                                                                \
-  cortex_m_cyccnt_##name_ = cortexm_cyccnt_count() - cortex_m_cyccnt_##name_;
+    cortex_m_cyccnt_##name_ =                                                  \
+        cortexm_cyccnt_count() - cortex_m_cyccnt_##name_;                      \
+    cortex_m_cyccnt_##name_ =                                                  \
+        cortexm_cyccnt_count() - cortex_m_cyccnt_##name_;                      \
+    cortex_m_cyccnt_##name_ =                                                  \
+        cortexm_cyccnt_count() - cortex_m_cyccnt_##name_;                      \
+  } while (0)
 #else
-#define CORTEX_M_CYCCNT_WRAP(block_, name_) {block_}
+#define CORTEX_M_CYCCNT_WRAP(name_, block_)                                    \
+  do {                                                                         \
+    { block_ }                                                                 \
+  } while (0)
 #endif
