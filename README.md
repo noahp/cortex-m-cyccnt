@@ -1,4 +1,4 @@
 # Cortex-M Cycle Counter
 
-Snippet of C code used to read the Cortex-M cycle counter and save results in a
-ring buffer, for cheesy profiling.
+Snippet of C code to quickly profile a block of code on a Cortex-M chip with a
+CYCCNT register.

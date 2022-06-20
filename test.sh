@@ -25,5 +25,5 @@ docker run \
   --tty \
   "$DOCKER_IMAGE_NAME" \
   bash -c '
-    clang -Weverything -Werror -c /mnt/workspace/cortexm-cycnt.h -o /dev/null
+    clang -Weverything -Werror -c /mnt/workspace/cortex_m_cyccnt.h -o /dev/null
   '

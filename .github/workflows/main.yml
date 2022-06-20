@@ -18,7 +18,7 @@ jobs:
         with:
           submodules: recursive
 
-      # run clang-10 with every warning
+      # run clang with every warning
       - name: Test clang compile
         run:
           ./test.sh
