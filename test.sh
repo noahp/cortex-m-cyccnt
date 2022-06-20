@@ -11,6 +11,19 @@ if ! command -v docker; then
     exit 1
 fi
 
-docker run -v $(pwd):/mnt/workspace -t silkeh/clang:10 bash -c "
+DOCKER_IMAGE_NAME=noahpendleton/clang-14:0.0.1
+
+# # Set the docker image name to default to repo basename
+# DOCKER_IMAGE_NAME=${DOCKER_IMAGE_NAME:-$(basename -s .git "$(git remote --verbose | awk 'NR==1 { print tolower($2) }')")}
+
+# # build the docker image
+# DOCKER_BUILDKIT=1 docker build -t "$DOCKER_IMAGE_NAME" -f Dockerfile .
+
+docker run \
+  --rm \
+  --volume "$(pwd)":/mnt/workspace \
+  --tty \
+  "$DOCKER_IMAGE_NAME" \
+  bash -c '
     clang -Weverything -Werror -c /mnt/workspace/cortexm-cycnt.h -o /dev/null
-"
+  '
