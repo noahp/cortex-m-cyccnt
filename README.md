@@ -15,7 +15,9 @@ int main(void) {
   // keep output state above the profiled block scope
   int result;
   // measure the long_function() call
-  CORTEX_M_CYCCNT_WRAP(profile_long_function, { result = long_function(); });
+  uint32_t cortex_m_cyccnt_profile_long_function;
+  CORTEX_M_CYCCNT_WRAP(cortex_m_cyccnt_profile_long_function,
+                       { result = long_function(); });
 
   // print result
   printf("long function cycle count: %lu\n",
