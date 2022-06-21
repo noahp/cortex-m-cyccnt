@@ -30,6 +30,7 @@ int main(void) {
 ## Limitations
 
 1. can't `return` inside the profiled block, bypasses the finish time check
+2. only able to count up to 2^32/ƒ_cpu_hz seconds
 
 ## Other approaches
 
