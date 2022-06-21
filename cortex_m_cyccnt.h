@@ -18,6 +18,7 @@
 #define ARM_CM_DWT_CYCCNT (*(uint32_t *)0xE0001004)
 #endif
 
+//! Run this once at system init, before doing any profiling
 static void cortexm_cyccnt_enable(void) {
   // Turn on cycle counting
   ARM_CM_DEMCR |= 1 << 24;   // enable ITM
@@ -27,18 +28,26 @@ static void cortexm_cyccnt_enable(void) {
 //! Simple function to get the current cycle count value
 static uint32_t cortexm_cyccnt_count(void) { return ARM_CM_DWT_CYCCNT; }
 
-//! Define a wrapper that can enclose any block (eg function body), and export a
-//! variable containing the last cycle count delta for the block.
+//! Define a wrapper, CORTEX_M_CYCCNT_WRAP_STORE,  that can enclose any block
+//! (eg function body), and export a variable containing the last cycle count
+//! delta for the block.
+//!
+//! Outputs the count to the first argument.
+//!
+//! NOTE: the enclosed block shouldn't contain any `return` statements, they'll
+//! skip over the final count value which will result in a garbage count.
 #if CORTEX_M_CYCCNT_ENABLED
-#define CORTEX_M_CYCCNT_WRAP(block_, name_)                                    \
-  extern uint32_t cortex_m_cyccnt_##name_;                                     \
-  static uint32_t cortex_m_cyccnt_##name_ = 0;                                 \
+#define CORTEX_M_CYCCNT_WRAP(result_, block_)                                  \
+  do {                                                                         \
+    result_ = cortexm_cyccnt_count();                                          \
                                                                                \
-  cortex_m_cyccnt_##name_ = cortexm_cyccnt_count();                            \
+    {block_}                                                                   \
                                                                                \
-  {block_}                                                                     \
-                                                                               \
-  cortex_m_cyccnt_##name_ = cortexm_cyccnt_count() - cortex_m_cyccnt_##name_;
+    result_ = cortexm_cyccnt_count() - result_;                                \
+  } while (0)
 #else
-#define CORTEX_M_CYCCNT_WRAP(block_, name_) {block_}
+#define CORTEX_M_CYCCNT_WRAP(name_, result_, block_)                           \
+  do {                                                                         \
+    { block_ }                                                                 \
+  } while (0)
 #endif

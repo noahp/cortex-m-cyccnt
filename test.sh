@@ -25,5 +25,7 @@ docker run \
   --tty \
   "$DOCKER_IMAGE_NAME" \
   bash -c '
-    clang -Weverything -Werror -c /mnt/workspace/cortex_m_cyccnt.h -o /dev/null
+    cd /mnt/workspace
+    clang -Weverything -Werror -c cortex_m_cyccnt.h -o /dev/null
+    clang -Werror -Weverything -Wno-reserved-identifier -Wno-declaration-after-statement -ggdb3 test.c -o test -finstrument-functions -lm && ./test
   '
