@@ -46,3 +46,7 @@ int main(void) {
 3. `-finstrument-functions` :
 
    https://mcuoneclipse.com/2015/04/04/poor-mans-trace-free-of-charge-function-entryexit-trace-with-gnu-tools/
+   
+4. x86 specific, but might be a similar approach that could be leveraged:
+
+   https://justine.lol/ftrace/
